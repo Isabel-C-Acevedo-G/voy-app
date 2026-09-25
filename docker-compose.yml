@@ -1,7 +1,10 @@
+version: '3.8'
+
 services:
   mysql:
     image: mysql:8.0
     container_name: voy_mysql
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ParqueaderoBicicletas
@@ -9,37 +12,52 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - voy_network
 
   backend:
     build: ./backend
     container_name: voy_backend
+    restart: always
     depends_on:
-      - mysql
-    volumes:
-      - ./backend:/app
-    ports:
-      - "8000:8000"
+      mysql:
+        condition: service_healthy
     environment:
       - DB_SERVER=mysql
       - DB_PORT=3306
-      - DB_DATABASE=ParqueaderoBicicletas
       - DB_UID=root
       - DB_PWD=root
+      - DB_DATABASE=ParqueaderoBicicletas
+      - SECRET_KEY=tu_clave_secreta_super_segura_2024
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    networks:
+      - voy_network
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
     image: nginx:alpine
     container_name: voy_frontend
+    restart: always
     ports:
       - "8080:80"
     volumes:
-      - .:/usr/share/nginx/html
+      - ./:/usr/share/nginx/html
+    networks:
+      - voy_network
+
+networks:
+  voy_network:
+    driver: bridge
 
 volumes:
   mysql_data:

@@ -1,149 +1,443 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>voy. - Gestión de Parqueaderos de Bicicletas</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>voy. - Gestión de Parqueaderos de Bicicletas</title>
+<link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --verdeazul-1:#0f6d6a;
+    --verdeazul-2:#123f6b;
+    --cobalto:#0047AB;
+    --cobalto-oscuro:#00337d;
+  }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  .mensaje { display: none; }
+  .mensaje.exito { display: block; }
+  .mensaje.error { display: block; }
+  .requiere-sesion, .solo-ciclista, .solo-vigilante, .solo-admin { display: none; }
+
+  /* Colores propios: no dependen de la config de Tailwind, siempre funcionan */
+  .bg-hero { background: linear-gradient(135deg, var(--verdeazul-1), var(--verdeazul-2)); }
+  .bg-cobalto { background-color: var(--cobalto); }
+  .text-cobalto { color: var(--cobalto); }
+  .border-cobalto { border-color: var(--cobalto); }
+  .btn-cobalto { background-color: var(--cobalto); color: #fff; }
+  .btn-cobalto:hover { background-color: var(--cobalto-oscuro); }
+  .btn-outline-cobalto { color: var(--cobalto); border: 1px solid var(--cobalto); background: transparent; }
+  .btn-outline-cobalto:hover { background-color: var(--cobalto); color: #fff; }
+
+  .bici-fondo { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.18; }
+</style>
 </head>
-<body>
-    <!-- Barra de Navegación Estilo Aplicación -->
-    <nav class="barra-navegacion">
-        <div class="marca-logo">🚴 voy<span>.</span></div>
-        <div class="enlaces-nav">
-            <a href="javascript:void(0)" onclick="mostrarInicio(event)">Inicio</a>
-            <a href="javascript:void(0)" onclick="mostrarUbicaciones(event)">Ubicaciones</a>
-            <a href="javascript:void(0)" onclick="mostrarPlanes(event)">Planes</a>
-            <a href="javascript:void(0)" onclick="mostrarRegistro(event)">Registro</a>
+<body class="bg-gray-50">
 
-            <button onclick="cerrarSesion()" id="btn-nav-logout" class="ocultar-seccion">Salir</button>
+  <!-- NAVBAR -->
+  <nav class="bg-white border-b sticky top-0 z-40 shadow-sm">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-3">
+      <a href="#hero" class="flex items-center gap-2">
+        <span class="text-2xl font-extrabold text-cobalto">voy<span class="text-gray-800">.</span></span>
+      </a>
+      <div class="hidden md:flex gap-6 font-semibold text-gray-700">
+        <a href="#hero" class="hover:text-cobalto">Inicio</a>
+        <a href="#ubicaciones" class="hover:text-cobalto">Ubicaciones</a>
+        <a href="#planes" class="hover:text-cobalto">Planes</a>
+        <a href="#panel" class="requiere-sesion hover:text-cobalto">Panel</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="badgeSesion" class="requiere-sesion bg-yellow-300 text-gray-800 text-xs font-bold px-3 py-1 rounded-full"></span>
+        <button type="button" data-modal-target="modalLogin" data-modal-toggle="modalLogin"
+          class="oculta-con-sesion btn-outline-cobalto font-semibold rounded-lg text-sm px-4 py-2">
+          Iniciar sesión
+        </button>
+        <button type="button" data-modal-target="modalRegistro" data-modal-toggle="modalRegistro"
+          class="oculta-con-sesion btn-cobalto font-semibold rounded-lg text-sm px-4 py-2">
+          Registrarse
+        </button>
+        <button type="button" onclick="cerrarSesion()"
+          class="requiere-sesion bg-gray-800 hover:bg-black text-white font-semibold rounded-lg text-sm px-4 py-2">
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" class="bg-hero text-white relative overflow-hidden">
+    <!-- bicicletas parqueadas de fondo -->
+    <svg class="bici-fondo" viewBox="0 0 1600 500" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <g id="bici">
+          <circle cx="0" cy="0" r="34" fill="none" stroke="white" stroke-width="6"/>
+          <circle cx="120" cy="0" r="34" fill="none" stroke="white" stroke-width="6"/>
+          <path d="M0,0 L55,-55 L120,0 M55,-55 L45,-95 L85,-95 M0,0 L70,-30 L55,-55" fill="none" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="45" cy="-100" r="9" fill="white"/>
+        </g>
+      </defs>
+      <use href="#bici" x="110" y="430"/>
+      <use href="#bici" x="360" y="430"/>
+      <use href="#bici" x="610" y="430"/>
+      <use href="#bici" x="860" y="430"/>
+      <use href="#bici" x="1110" y="430"/>
+      <use href="#bici" x="1360" y="430"/>
+    </svg>
+
+    <div class="relative max-w-6xl mx-auto px-4 py-16 text-center z-10">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-white drop-shadow">Tu bici te mueve.<br>Nosotros la cuidamos.</h1>
+      <p class="text-lg text-white/90 max-w-2xl mx-auto mb-8">Parqueo de bicicletas seguro, cómodo y sostenible en Medellín.</p>
+      <div class="flex justify-center gap-4 flex-wrap">
+        <button data-modal-target="modalRegistro" data-modal-toggle="modalRegistro"
+          class="oculta-con-sesion bg-white text-cobalto font-bold px-6 py-3 rounded-lg hover:bg-gray-100">
+          Crear cuenta gratis
+        </button>
+        <a href="#panel" class="requiere-sesion bg-white/15 border border-white text-white font-bold px-6 py-3 rounded-lg hover:bg-white/25">
+          Ir a mi panel
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-6xl mx-auto px-4 -mt-8 relative z-10">
+
+    <!-- DISPONIBILIDAD (pública) -->
+    <div class="bg-white rounded-xl shadow-lg border-t-4 border-cobalto p-6 mb-8">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-gray-800">Cupos disponibles ahora</h2>
+          <p class="text-gray-500 text-sm">Consulta en tiempo real antes de salir de casa.</p>
         </div>
-    </nav>
+        <button id="btnDisponibilidad" class="btn-cobalto font-semibold px-5 py-2.5 rounded-lg">
+          Consultar disponibilidad
+        </button>
+      </div>
+      <div id="resultadoDisponibilidad" class="mensaje mt-4 p-4 rounded-lg"></div>
+    </div>
 
-    <main class="contenedor-landing">
-        
-        <!-- SECCIÓN 1: LOGIN ESTILO START-UP ORIGINAL (SIN ARBOLITOS VIEJOS) -->
-        <div id="seccion-login" class="modulo-login-premium">
-            <div class="columna-texto-login">
-                <h1>Tu bici te mueve.<br>Nosotros <span class="texto-resaltado">la cuidamos.</span></h1>
-                <p>Parqueo de bicicletas seguro, comodo, contribuye a una ciudad mas limpia y sostenible.</p>
+    <!-- UBICACIONES / PLANES -->
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <div id="ubicaciones" class="bg-white rounded-xl shadow border-t-4 border-teal-600 p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-3">Ubicaciones</h2>
+        <ul class="space-y-2 text-gray-700">
+          <li><span class="font-semibold text-cobalto">Parqueadero 1</span> · Centro Comercial</li>
+          <li><span class="font-semibold text-cobalto">Parqueadero 2</span> · Estación de Metro</li>
+          <li><span class="font-semibold text-cobalto">Parqueadero 3</span> · Universidad</li>
+        </ul>
+      </div>
+      <div id="planes" class="bg-white rounded-xl shadow border-t-4 border-sky-600 p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-3">Planes</h2>
+        <ul class="space-y-2 text-gray-700">
+          <li><span class="font-semibold text-cobalto">Plan Diario</span> · Acceso por 24 horas</li>
+          <li><span class="font-semibold text-cobalto">Plan Mensual</span> · Uso ilimitado un mes</li>
+          <li><span class="font-semibold text-cobalto">Plan Corporativo</span> · Empresas y grupos</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PANEL (requiere sesión) -->
+    <div id="panel" class="requiere-sesion mb-12">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Tu panel</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <!-- Ciclista -->
+        <button data-modal-target="modalBici" data-modal-toggle="modalBici"
+          class="solo-ciclista bg-white border-t-4 border-teal-600 rounded-xl shadow p-5 text-left hover:shadow-lg">
+          <p class="font-bold text-gray-800">Registrar mi bicicleta</p>
+          <p class="text-sm text-gray-500 mt-1">Da de alta una nueva bici a tu nombre.</p>
+        </button>
+        <button data-modal-target="modalReserva" data-modal-toggle="modalReserva"
+          class="solo-ciclista bg-white border-t-4 border-teal-600 rounded-xl shadow p-5 text-left hover:shadow-lg">
+          <p class="font-bold text-gray-800">Reservar cupo (30 min)</p>
+          <p class="text-sm text-gray-500 mt-1">Aparta un espacio antes de llegar.</p>
+        </button>
+
+        <!-- Vigilante / Admin -->
+        <button data-modal-target="modalIngreso" data-modal-toggle="modalIngreso"
+          class="solo-vigilante bg-white border-t-4 border-cobalto rounded-xl shadow p-5 text-left hover:shadow-lg">
+          <p class="font-bold text-gray-800">Registrar ingreso</p>
+          <p class="text-sm text-gray-500 mt-1">Marca la entrada de una bicicleta.</p>
+        </button>
+        <button data-modal-target="modalSalida" data-modal-toggle="modalSalida"
+          class="solo-vigilante bg-white border-t-4 border-cobalto rounded-xl shadow p-5 text-left hover:shadow-lg">
+          <p class="font-bold text-gray-800">Registrar salida</p>
+          <p class="text-sm text-gray-500 mt-1">Marca la salida de una bicicleta.</p>
+        </button>
+        <button data-modal-target="modalIncidente" data-modal-toggle="modalIncidente"
+          class="solo-vigilante bg-white border-t-4 border-cobalto rounded-xl shadow p-5 text-left hover:shadow-lg">
+          <p class="font-bold text-gray-800">Reportar incidente</p>
+          <p class="text-sm text-gray-500 mt-1">Daño, sospecha o pérdida.</p>
+        </button>
+
+        <!-- Admin -->
+        <button data-modal-target="modalReporte" data-modal-toggle="modalReporte"
+          class="solo-admin bg-white border-t-4 border-indigo-700 rounded-xl shadow p-5 text-left hover:shadow-lg">
+          <p class="font-bold text-gray-800">Generar reporte</p>
+          <p class="text-sm text-gray-500 mt-1">Movimientos e incidentes por fecha.</p>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: LOGIN ============ -->
+  <div id="modalLogin" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full h-full overflow-y-auto flex items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-md p-4">
+      <div class="relative bg-white rounded-xl shadow border-t-4 border-cobalto">
+        <div class="flex items-center justify-between p-5 border-b bg-cobalto rounded-t-xl">
+          <h3 class="text-xl font-bold text-white">Control de acceso</h3>
+          <button type="button" data-modal-hide="modalLogin" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-5 space-y-4">
+          <div>
+            <label class="block mb-1 text-sm font-semibold text-gray-700">Usuario / Correo</label>
+            <input type="text" id="loginUsuario" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="correo@dominio.com">
+          </div>
+          <div>
+            <label class="block mb-1 text-sm font-semibold text-gray-700">Contraseña</label>
+            <input type="password" id="loginContrasena" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="••••••••">
+          </div>
+          <button id="btnLogin" class="w-full btn-cobalto font-bold py-2.5 rounded-lg">Acceder al panel</button>
+          <p class="text-sm text-center text-gray-500">¿No tienes cuenta?
+            <button type="button" data-modal-hide="modalLogin" data-modal-target="modalRegistro" data-modal-toggle="modalRegistro" class="text-cobalto font-semibold hover:underline">Regístrate aquí</button>
+          </p>
+          <div id="msgLogin" class="mensaje p-3 rounded-lg text-sm font-semibold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: REGISTRO (roles separados en pestañas) ============ -->
+  <div id="modalRegistro" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full h-full overflow-y-auto flex items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-lg p-4">
+      <div class="relative bg-white rounded-xl shadow border-t-4 border-cobalto">
+        <div class="flex items-center justify-between p-5 border-b bg-cobalto rounded-t-xl">
+          <h3 class="text-xl font-bold text-white">Crear cuenta</h3>
+          <button type="button" data-modal-hide="modalRegistro" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+
+        <!-- Selector de rol, como pestañas separadas -->
+        <div class="flex border-b px-5 pt-3 gap-2">
+          <button type="button" id="tabCiclista" onclick="elegirRolRegistro('Ciclista')"
+            class="px-4 py-2 rounded-t-lg font-semibold text-sm btn-cobalto">Ciclista</button>
+          <button type="button" id="tabVigilante" onclick="elegirRolRegistro('Vigilante')"
+            class="px-4 py-2 rounded-t-lg font-semibold text-sm bg-gray-100 text-gray-600">Vigilante</button>
+          <button type="button" id="tabAdministrador" onclick="elegirRolRegistro('Administrador')"
+            class="px-4 py-2 rounded-t-lg font-semibold text-sm bg-gray-100 text-gray-400">Administrador</button>
+        </div>
+
+        <div class="p-5">
+          <!-- Aviso cuando se elige Administrador -->
+          <div id="avisoAdmin" class="hidden bg-blue-50 border border-cobalto text-gray-700 text-sm rounded-lg p-4 mb-2">
+            Las cuentas de <strong>Administrador</strong> no se crean desde aquí por seguridad: se asignan
+            manualmente en la base de datos. Regístrate como Ciclista o Vigilante; un administrador
+            puede luego cambiarte el rol.
+          </div>
+
+          <div id="formRegistroCampos" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-1 text-sm font-semibold text-gray-700">Documento *</label>
+                <input type="text" id="regDocumento" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: 1234567890">
+              </div>
+              <div>
+                <label class="block mb-1 text-sm font-semibold text-gray-700">Nombres *</label>
+                <input type="text" id="regNombres" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: Juan">
+              </div>
             </div>
-            <div class="columna-formulario-login">
-                <div class="tarjeta-autenticacion">
-                    <h2>🔐 Control de Acceso</h2>
-                    <label>Usuario / Correo</label>
-                    <input type="text" id="login-usuario" placeholder="admin_usuario">
-                    
-                    <label>Contraseña</label>
-                    <input type="password" id="login-password" placeholder="••••••••">
-                    
-                    <button onclick="autenticarUsuario()" class="btn-principal">Acceder al Panel</button>
-                    <p class="texto-pequeno" style="margin-top:1rem; font-size:0.9rem; color:#ffffff;">¿No tienes cuenta? <a href="javascript:void(0)" onclick="mostrarRegistro(event)" style="color:#fde68a;">Regístrate aquí</a></p>
-                </div>
-
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-1 text-sm font-semibold text-gray-700">Apellidos</label>
+                <input type="text" id="regApellidos" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: Pérez">
+              </div>
+              <div>
+                <label class="block mb-1 text-sm font-semibold text-gray-700">Correo *</label>
+                <input type="email" id="regCorreo" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: juan@gmail.com">
+              </div>
             </div>
-        </div>
-
-        <div id="seccion-registro" class="tarjeta-autenticacion ocultar-seccion" style="margin: 2rem auto; max-width: 640px;">
-            <h2>📝 Registro de Usuario</h2>
-
-            <label>Documento</label>
-            <input type="text" id="registro-documento" placeholder="Ej: 12345678">
-
-            <label>Nombres</label>
-            <input type="text" id="registro-nombres" placeholder="Ej: Isabel Cristina">
-
-            <label>Apellidos</label>
-            <input type="text" id="registro-apellidos" placeholder="Ej: Acevedo Guirales">
-
-            <label>Correo</label>
-            <input type="email" id="registro-correo" placeholder="Ej: correo@dominio.com">
-
-            <label>Teléfono</label>
-            <input type="text" id="registro-telefono" placeholder="Ej: 3226753558">
-
-            <label>Contraseña</label>
-            <input type="password" id="registro-password" placeholder="••••••••">
-
-            <input type="hidden" id="registro-rol" value="Ciclista">
-
-            <button onclick="registrarUsuario()" class="btn-principal">Crear cuenta</button>
-            <button onclick="mostrarLogin(event)" class="btn-secundario" style="margin-top:0.75rem;">Volver al inicio</button>
-        </div>
-
-        <!-- SECCIÓN 2: UBICACIONES -->
-        <div id="seccion-ubicaciones" class="tarjeta-autenticacion ocultar-seccion" style="margin-top:1.5rem;">
-            <h2>📍 Ubicaciones</h2>
-            <p>Selecciona el punto más cercano para tu parqueadero de bicicleta.</p>
-            <ul>
-                <li>Parqueadero 1 - Centro Comercial</li>
-                <li>Parqueadero 2 - Estación de Metro</li>
-                <li>Parqueadero 3 - Universidad</li>
-            </ul>
-            <button onclick="mostrarInicio()" class="btn-secundario" style="margin-top:0.75rem;">Volver al inicio</button>
-        </div>
-
-        <!-- SECCIÓN 3: PLANES -->
-        <div id="seccion-planes" class="tarjeta-autenticacion ocultar-seccion" style="margin-top:1.5rem;">
-            <h2>💳 Planes</h2>
-            <p>Revisa las opciones disponibles para el uso de parqueaderos.</p>
-            <ul>
-                <li>Plan Diario - Acceso por 24 horas</li>
-                <li>Plan Mensual - Uso ilimitado durante un mes</li>
-                <li>Plan Corporativo - Para empresas y grupos</li>
-            </ul>
-            <button onclick="mostrarInicio()" class="btn-secundario" style="margin-top:0.75rem;">Volver al inicio</button>
-        </div>
-
-        <!-- SECCIÓN 4: PANEL OPERATIVO MULTI-ROL (CONTRATE VERDE) -->
-        <div id="panel-sistema" class="ocultar-seccion">
-            <div class="hero-sistema">
-                <h1 id="saludo-rol">Panel de Control</h1>
-                <p>Monitoreo operativo e infraestructura de celdas relacionales en tiempo real.</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-1 text-sm font-semibold text-gray-700">Teléfono</label>
+                <input type="tel" id="regTelefono" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: 3001234567">
+              </div>
+              <div>
+                <label class="block mb-1 text-sm font-semibold text-gray-700">Contraseña *</label>
+                <input type="password" id="regContrasena" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Mínimo 8 caracteres">
+              </div>
             </div>
-
-            <!-- Consulta de Disponibilidad de Celdas -->
-            <div class="tarjeta-contador-premium">
-                <p>Cupos Disponibles Actualmente</p>
-                <div id="contador-cupos" class="numero-cupos-premium">--</div>
-            </div>
-
-            <div class="grilla-operaciones-premium">
-                <!-- Módulo de Gestión Operativa -->
-                <div id="bloque-gestion-operario" class="tarjeta-accion-premium">
-                    <h3>🛠️ Registro de Movimientos</h3>
-                    <p>Gestión de ingresos y liberación de celdas físicas.</p>
-                    
-                    <label>Cédula del Ciclista / ID Bici</label>
-                    <input type="text" id="doc-movimiento" placeholder="Ej: 1017200XXX">
-                    
-                    <label>Código de Celda / Espacio (Solo para Ingresos)</label>
-                    <input type="text" id="espacio-movimiento" placeholder="Ej: Celda-05">
-                    
-                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                        <button onclick="procesarMovimiento('ingreso')" class="btn-principal">Registrar Entrada</button>
-                        <button onclick="procesarMovimiento('salida')" class="btn-principal btn-rojo-premium">Registrar Salida</button>
-                    </div>
-                </div>
-
-                <!-- Módulo Reporte de Incidentes -->
-                <div class="tarjeta-accion-premium">
-                    <h3>⚠️ Reporte de Novedades e Incidentes</h3>
-                    <p>Registro de anomalías o daños en las bicicletas para auditoría administrativa.</p>
-                    
-                    <label>Código de Bicicleta Afectada</label>
-                    <input type="text" id="incidente-bici" placeholder="Ej: BICI-99">
-                    
-                    <label>Descripción de la Novedad</label>
-                    <input type="text" id="incidente-descripcion" placeholder="Ej: Cadena suelta o rayón lateral">
-                    
-                    <button onclick="registrarIncidente()" class="btn-principal" style="background-color: #27ae60;">Reportar Incidente</button>
-                </div>
-            </div>
+            <input type="hidden" id="regRol" value="Ciclista">
+            <button id="btnRegistro" class="w-full btn-cobalto font-bold py-2.5 rounded-lg">Crear cuenta</button>
+          </div>
+          <div id="msgRegistro" class="mensaje p-3 rounded-lg text-sm font-semibold mt-3"></div>
         </div>
+      </div>
+    </div>
+  </div>
 
-    </main>
+  <!-- ============ MODAL: REGISTRAR BICICLETA ============ -->
+  <div id="modalBici" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full h-full overflow-y-auto flex items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-md p-4">
+      <div class="relative bg-white rounded-xl shadow border-t-4 border-cobalto">
+        <div class="flex items-center justify-between p-5 border-b bg-cobalto rounded-t-xl">
+          <h3 class="text-lg font-bold text-white">Registrar mi bicicleta</h3>
+          <button type="button" data-modal-hide="modalBici" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block mb-1 text-sm font-semibold text-gray-700">Marca</label>
+              <input type="text" id="biciMarca" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: GW">
+            </div>
+            <div>
+              <label class="block mb-1 text-sm font-semibold text-gray-700">Modelo</label>
+              <input type="text" id="biciModelo" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: Hawk">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block mb-1 text-sm font-semibold text-gray-700">Color</label>
+              <input type="text" id="biciColor" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: Negro">
+            </div>
+            <div>
+              <label class="block mb-1 text-sm font-semibold text-gray-700">N° de serie *</label>
+              <input type="text" id="biciSerie" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: SERIE001">
+            </div>
+          </div>
+          <button id="btnRegistrarBici" class="w-full btn-cobalto font-bold py-2.5 rounded-lg">Registrar bicicleta</button>
+          <div id="msgBici" class="mensaje p-3 rounded-lg text-sm font-semibold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <script src="js/script.js"></script>
+  <!-- ============ MODAL: RESERVAR CUPO ============ -->
+  <div id="modalReserva" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full h-full overflow-y-auto flex items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-md p-4">
+      <div class="relative bg-white rounded-xl shadow border-t-4 border-cobalto">
+        <div class="flex items-center justify-between p-5 border-b bg-cobalto rounded-t-xl">
+          <h3 class="text-lg font-bold text-white">Reservar cupo (30 minutos)</h3>
+          <button type="button" data-modal-hide="modalReserva" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-5 space-y-4">
+          <label class="block mb-1 text-sm font-semibold text-gray-700">N° de serie de tu bicicleta</label>
+          <input type="text" id="reservaSerie" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: SERIE001">
+          <button id="btnReservar" class="w-full btn-cobalto font-bold py-2.5 rounded-lg">Reservar mi cupo</button>
+          <div id="msgReserva" class="mensaje p-3 rounded-lg text-sm font-semibold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: INGRESO ============ -->
+  <div id="modalIngreso" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full h-full overflow-y-auto flex items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-md p-4">
+      <div class="relative bg-white rounded-xl shadow border-t-4 border-cobalto">
+        <div class="flex items-center justify-between p-5 border-b bg-cobalto rounded-t-xl">
+          <h3 class="text-lg font-bold text-white">Registrar ingreso</h3>
+          <button type="button" data-modal-hide="modalIngreso" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-5 space-y-4">
+          <div>
+            <label class="block mb-1 text-sm font-semibold text-gray-700">Documento del ciclista</label>
+            <input type="text" id="ingresoDoc" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: 1017200000">
+          </div>
+          <div>
+            <label class="block mb-1 text-sm font-semibold text-gray-700">N° de serie de la bici (opcional)</label>
+            <input type="text" id="ingresoSerie" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: SERIE001">
+          </div>
+          <button id="btnIngreso" class="w-full btn-cobalto font-bold py-2.5 rounded-lg">Registrar ingreso</button>
+          <div id="msgIngreso" class="mensaje p-3 rounded-lg text-sm font-semibold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: SALIDA ============ -->
+  <div id="modalSalida" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full h-full overflow-y-auto flex items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-md p-4">
+      <div class="relative bg-white rounded-xl shadow border-t-4 border-cobalto">
+        <div class="flex items-center justify-between p-5 border-b bg-cobalto rounded-t-xl">
+          <h3 class="text-lg font-bold text-white">Registrar salida</h3>
+          <button type="button" data-modal-hide="modalSalida" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-5 space-y-4">
+          <label class="block mb-1 text-sm font-semibold text-gray-700">Documento del ciclista</label>
+          <input type="text" id="salidaDoc" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Ej: 1017200000">
+          <button id="btnSalida" class="w-full btn-cobalto font-bold py-2.5 rounded-lg">Registrar salida</button>
+          <div id="msgSalida" class="mensaje p-3 rounded-lg text-sm font-semibold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: INCIDENTE ============ -->
+  <div id="modalIncidente" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full h-full overflow-y-auto flex items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-md p-4">
+      <div class="relative bg-white rounded-xl shadow border-t-4 border-cobalto">
+        <div class="flex items-center justify-between p-5 border-b bg-cobalto rounded-t-xl">
+          <h3 class="text-lg font-bold text-white">Reportar incidente</h3>
+          <button type="button" data-modal-hide="modalIncidente" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block mb-1 text-sm font-semibold text-gray-700">Tipo</label>
+              <select id="incTipo" class="w-full border border-gray-300 rounded-lg p-2.5">
+                <option value="daño">Daño</option>
+                <option value="sospecha">Sospecha</option>
+                <option value="perdida">Pérdida</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1 text-sm font-semibold text-gray-700">ID usuario (opcional)</label>
+              <input type="number" id="incIdUsuario" class="w-full border border-gray-300 rounded-lg p-2.5">
+            </div>
+          </div>
+          <label class="block mb-1 text-sm font-semibold text-gray-700">ID bicicleta (opcional)</label>
+          <input type="number" id="incIdBicicleta" class="w-full border border-gray-300 rounded-lg p-2.5">
+          <label class="block mb-1 text-sm font-semibold text-gray-700">Descripción</label>
+          <input type="text" id="incDescripcion" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Mínimo 10 caracteres">
+          <button id="btnIncidente" class="w-full btn-cobalto font-bold py-2.5 rounded-lg">Reportar incidente</button>
+          <div id="msgIncidente" class="mensaje p-3 rounded-lg text-sm font-semibold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: REPORTE ============ -->
+  <div id="modalReporte" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full h-full overflow-y-auto flex items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-2xl p-4">
+      <div class="relative bg-white rounded-xl shadow border-t-4 border-cobalto">
+        <div class="flex items-center justify-between p-5 border-b bg-cobalto rounded-t-xl">
+          <h3 class="text-lg font-bold text-white">Generar reporte</h3>
+          <button type="button" data-modal-hide="modalReporte" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block mb-1 text-sm font-semibold text-gray-700">Desde</label>
+              <input type="datetime-local" id="repFechaInicio" class="w-full border border-gray-300 rounded-lg p-2.5">
+            </div>
+            <div>
+              <label class="block mb-1 text-sm font-semibold text-gray-700">Hasta</label>
+              <input type="datetime-local" id="repFechaFin" class="w-full border border-gray-300 rounded-lg p-2.5">
+            </div>
+          </div>
+          <label class="block mb-1 text-sm font-semibold text-gray-700">Tipo</label>
+          <select id="repTipo" class="w-full border border-gray-300 rounded-lg p-2.5">
+            <option value="movimientos">Movimientos</option>
+            <option value="incidentes">Incidentes</option>
+            <option value="todos">Todos</option>
+          </select>
+          <button id="btnReporte" class="w-full btn-cobalto font-bold py-2.5 rounded-lg">Generar reporte</button>
+          <div id="msgReporte" class="mensaje p-3 rounded-lg text-sm font-semibold"></div>
+          <div id="tablaReporte" class="overflow-x-auto text-sm"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>

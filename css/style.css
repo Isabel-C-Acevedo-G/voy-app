@@ -1,162 +1,335 @@
+/* ============================================================
+   SISTEMA DE PARQUEADERO DE BICICLETAS - MEDELLÍN
+   Archivo: css/style.css
+   Paleta de colores inspirada en Medellín
+   ============================================================ */
+
 :root {
-    --verde-corporativo: #1b4d3e;     /* Verde oscuro y frondoso para todas las letras */
-    --verde-brillante: #39A900;       /* Verde vibrante para los botones principales */
-    --verde-neon: #2ecc71;            
-    --azul-oscuro: #0f172a;           
-    --gris-suave: rgba(255, 255, 255, 0.93); 
-    --borde-curvo: 24px;              
+    /* Colores Medellín */
+    --verde-montana: #00A650;
+    --magenta: #9B30FF;
+    --naranja: #FF8C00;
+    --turquesa: #40E0D0;
+    --amarillo: #FFD700;
+    
+    /* Colores principales */
+    --color-primario: #00A650;
+    --color-secundario: #9B30FF;
+    --color-acento: #FF8C00;
+    
+    /* Gradientes Medellín */
+    --gradiente-principal: linear-gradient(135deg, #00A650 0%, #40E0D0 100%);
+    --gradiente-secundario: linear-gradient(135deg, #9B30FF 0%, #FF8C00 100%);
+    
+    /* Colores de estado */
+    --color-exito: #28a745;
+    --color-error: #dc3545;
+    --color-advertencia: #ffc107;
+    
+    /* Sombras */
+    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --sombra-fuerte: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================================
+   RESET Y BASE
+   ============================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    margin: 0;
-    padding: 0;
+    background: var(--gradiente-principal);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
-    color: var(--verde-corporativo); /* Forzamos a que TODO el texto sea verde */
-    
-    /* CORRECCIÓN DE FONDO: Carga tu imagen local 'fondo.jpg' de forma garantizada */
-    background-image: 
-        linear-gradient(to bottom, rgba(240, 248, 240, 0.2), rgba(200, 230, 201, 0.35)),
-        url('./fondo.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+    padding: 20px;
+    color: #333;
 }
 
-/* BARRA DE NAVEGACIÓN ESTILO APP EN VERDE */
-.barra-navegacion {
+/* ============================================================
+   NAVEGACIÓN
+   ============================================================ */
+
+.nav {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
     align-items: center;
-    padding: 1.5rem 4rem;
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 3px solid var(--verde-brillante);
 }
 
-.marca-logo {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--verde-corporativo); /* Nombre 'voy' en verde corporativo */
-    letter-spacing: -1px;
-}
-
-.marca-logo span { color: var(--verde-brillante); }
-
-.enlaces-nav a {
+.nav a {
+    color: white;
     text-decoration: none;
-    color: var(--verde-corporativo); /* Enlaces del menú en verde corporativo */
-    font-weight: 700;
-    margin-right: 2rem;
-    font-size: 1rem;
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.3s;
 }
 
-/* MAQUETACIÓN DE 2 COLUMNAS AMPLIAS */
-.contenedor-landing {
-    max-width: 1200px;
-    margin: 4rem auto;
-    padding: 0 2rem;
+.nav a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    text-decoration: none;
 }
 
-.modulo-login-premium {
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 4rem;
-    align-items: center;
-    width: 100%;
+/* ============================================================
+   TÍTULOS
+   ============================================================ */
+
+h1 {
+    color: white;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.columna-texto-login h1 {
-    font-size: 3.8rem;
-    line-height: 1.1;
-    font-weight: 800;
-    color: var(--verde-corporativo); /* Título principal en verde corporativo */
-    margin: 0 0 1.7rem 0;
-    max-width: 600px;
-    font-weight: 800;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9) !important; 
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5em;
 }
 
-
-.texto-resaltado { color: var(--verde-brillante); }
-
-/* 1. Unificar todo el título principal en verde oscuro */
-.texto-resaltado { 
-    color: var(--verde-corporativo) !important; 
+h3 {
+    color: #555;
+    margin: 15px 0 10px;
 }
 
-/* 2. Cambiar el párrafo a blanco puro con sombra nítida */
-.columna-texto-login p {
-    font-size: 1.5rem;
-    color: #ffffff !important; 
-    line-height: 1.6;
-    margin: 0 0 2rem 0;
-    max-width: 500px;
-    font-weight: 600;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9) !important; 
+.subtitle {
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.1em;
 }
 
+/* ============================================================
+   TARJETAS (CARDS)
+   ============================================================ */
 
-/* TARJETA DE ACCESO LIMPIA */
-.tarjeta-autenticacion {
-    background: var(--gris-suave);
-    backdrop-filter: blur(8px);
-    padding: 3rem;
-    border-radius: var(--borde-curvo);
-    box-shadow: 0 20px 40px rgba(27, 77, 62, 0.12);
-    border: 1px solid rgba(57, 169, 0, 0.2);
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin: 20px 0;
+    box-shadow: var(--sombra-suave);
+    border-top: 4px solid var(--color-primario);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.tarjeta-autenticacion h2 {
-    margin-top: 0;
-    font-size: 1.6rem;
-    color: var(--verde-corporativo); /* Letras de la tarjeta en verde corporativo */
-    margin-bottom: 2rem;
-    font-weight: 800;
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-fuerte);
 }
+
+/* ============================================================
+   FORMULARIOS
+   ============================================================ */
 
 label {
     display: block;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--verde-corporativo); /* Subtítulos de campos en verde corporativo */
+    margin: 10px 0 5px;
+    font-weight: bold;
+    color: #555;
+    font-size: 14px;
 }
 
 input {
     width: 100%;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    border: 2px solid #cbd5e1;
-    border-radius: 12px;
-    box-sizing: border-box;
-    font-size: 1rem;
-    color: var(--verde-corporativo);
-    background-color: #f8fafc;
+    padding: 10px 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
 }
 
-/* BOTÓN DE ACCESO */
-.btn-principal {
-    width: 100%;
-    background-color: var(--verde-brillante);
+input:focus {
+    border-color: var(--color-primario);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 166, 80, 0.1);
+}
+
+input::placeholder {
+    color: #aaa;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* ============================================================
+   BOTONES
+   ============================================================ */
+
+button, .btn {
+    background: var(--gradiente-principal);
     color: white;
-    padding: 1.1rem;
     border: none;
-    border-radius: 30px;
-    font-size: 1.1rem;
-    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(57, 169, 0, 0.2);
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 15px;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* PANEL INTERNO */
-.hero-sistema h1 { font-size: 3rem; font-weight: 800; color: var(--verde-corporativo); }
-.hero-sistema p { color: var(--verde-corporativo); font-weight: 600; }
-.tarjeta-contador-premium { background-color: var(--azul-oscuro); color: white; text-align: center; padding: 2.5rem; border-radius: var(--borde-curvo); max-width: 500px; margin: 0 auto 3rem auto; }
-.numero-cupos-premium { font-size: 5rem; font-weight: 800; color: var(--verde-neon); }
-.grilla-operaciones-premium { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-.tarjeta-accion-premium { background: var(--gris-suave); backdrop-filter: blur(8px); padding: 3rem; border-radius: var(--borde-curvo); border: 1px solid #e2e8f0; }
-.tarjeta-accion-premium h3 { color: var(--verde-corporativo); font-weight: 800; }
-.btn-rojo-premium { background-color: #e2e8f0; color: var(--verde-corporativo); }
-.ocultar-seccion { display: none !important; }
+button:hover, .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 166, 80, 0.4);
+}
+
+button:active, .btn:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-primary {
+    background: var(--gradiente-principal);
+}
+
+.btn-secondary {
+    background: var(--gradiente-secundario);
+}
+
+.btn-secondary:hover {
+    box-shadow: 0 4px 12px rgba(155, 48, 255, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.btn-danger:hover {
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+/* ============================================================
+   MENSAJES
+   ============================================================ */
+
+.mensaje {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-weight: bold;
+    display: none;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mensaje.exito {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    display: block;
+}
+
+.mensaje.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    display: block;
+}
+
+.mensaje.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+    display: block;
+}
+
+/* ============================================================
+   LISTAS
+   ============================================================ */
+
+ul {
+    margin-left: 20px;
+    line-height: 1.8;
+}
+
+ul li {
+    color: #333;
+    padding: 5px 0;
+}
+
+ul li strong {
+    color: var(--color-primario);
+}
+
+/* ============================================================
+   ENLACES
+   ============================================================ */
+
+a {
+    color: var(--color-primario);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    .nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
